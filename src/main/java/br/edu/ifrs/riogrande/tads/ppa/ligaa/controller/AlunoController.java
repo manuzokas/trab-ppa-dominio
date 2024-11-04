@@ -1,6 +1,7 @@
 package br.edu.ifrs.riogrande.tads.ppa.ligaa.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifrs.riogrande.tads.ppa.ligaa.entity.Aluno;
 import br.edu.ifrs.riogrande.tads.ppa.ligaa.service.AlunoService;
 import br.edu.ifrs.riogrande.tads.ppa.ligaa.service.NovoAluno;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 // Rotear tudo "que tem a ver" com Aluno
@@ -25,7 +25,6 @@ public class AlunoController {
 
     private final AlunoService alunoService;
 
-    // o AlunoService será "injetado" pelo Spring (framework)
     public AlunoController(AlunoService alunoService) {
         this.alunoService = alunoService;
     }
@@ -42,16 +41,17 @@ public class AlunoController {
     
     @GetMapping(path = "/api/v1/alunos/{cpf}") // identificador
     public ResponseEntity<Aluno> buscaCpf(@PathVariable("cpf") String cpf) {
+        Optional<Aluno> optionalAluno = alunoService.buscarAlunoPorCpf(cpf);
 
-        Aluno aluno = alunoService.buscarAluno(cpf);
-
-        return ResponseEntity.ok(aluno); // 200
+        if (optionalAluno.isPresent()) {
+            return ResponseEntity.ok(optionalAluno.get()); // 200 retorna o aluno encontrado
+        } else {
+            return ResponseEntity.notFound().build(); // 404 aluno não encontrado
+        }
     }
 
     @GetMapping(path = "/api/v1/alunos")
     public ResponseEntity<List<Aluno>> buscaTodos() {
         return ResponseEntity.ok(alunoService.findAll()); // outras opções: 404 ou 204
     }
-
-    // public void novoAlunoV2(NovoAlunoV2 aluno)
 }

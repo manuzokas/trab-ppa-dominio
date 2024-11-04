@@ -1,15 +1,8 @@
 package br.edu.ifrs.riogrande.tads.ppa.ligaa.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-// Data Transfer Object
-// JavaBean
 
 public class NovoAluno {
-    // CoC: Convention over Configuration
-    // Convenção antes de Configuração
 
     private String nome;
 
@@ -17,6 +10,8 @@ public class NovoAluno {
     private String enderecoEletronico;
     
     private String cpf;
+
+    private String login;
 
     public String getNome() {
         return nome;
@@ -47,5 +42,12 @@ public class NovoAluno {
         return "NovoAluno [nome=" + nome + ", enderecoEletronico=" + enderecoEletronico + ", cpf=" + cpf + "]";
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
     
 }

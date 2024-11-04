@@ -1,14 +1,10 @@
 package br.edu.ifrs.riogrande.tads.ppa.ligaa.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 public class Aluno {
     // -- campos de controle
-    private UUID id;
+    private Integer id;
     private LocalDateTime dataHoraCriacao;
     private LocalDateTime dataHoraAlteracao;
     private boolean desativado; // false
@@ -16,7 +12,7 @@ public class Aluno {
     // --
     private String nome;
     private String enderecoEletronico;
-    private String login; // e-mail
+    private String login;
     private String cpf;
 
     public String getEnderecoEletronico() {
@@ -27,11 +23,11 @@ public class Aluno {
         this.enderecoEletronico = enderecoEletronico;
     }
 
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
