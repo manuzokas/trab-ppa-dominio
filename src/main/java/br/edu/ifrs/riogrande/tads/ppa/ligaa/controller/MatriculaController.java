@@ -14,6 +14,7 @@ import br.edu.ifrs.riogrande.tads.ppa.ligaa.service.MatriculaService;
 import br.edu.ifrs.riogrande.tads.ppa.ligaa.service.NovaMatricula;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/matriculas")
@@ -55,5 +56,23 @@ public class MatriculaController {
                 .orElseThrow(() -> new IllegalArgumentException("Matrícula não encontrada com ID: " + id));
         return ResponseEntity.ok(matricula);
     }
+
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Matricula> atualizarMatricula(@PathVariable int id, @RequestBody Matricula novaMatricula) {
+        Matricula matriculaAtualizada = matriculaService.atualizarMatricula(id, novaMatricula);
+        return ResponseEntity.ok(matriculaAtualizada);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarMatricula(@PathVariable int id) {
+        matriculaService.deletarMatricula(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Matricula>> buscarTodasMatriculas() {
+    return ResponseEntity.ok(matriculaService.findAll());
+    }
+
 
 }

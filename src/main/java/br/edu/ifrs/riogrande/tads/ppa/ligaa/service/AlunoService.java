@@ -48,4 +48,30 @@ public class AlunoService {
         return alunoRepository.findByCpf(cpf);
     }
 
+    public boolean atualizarAluno(String cpf, NovoAluno novoAluno) {
+        Optional<Aluno> alunoExistente = alunoRepository.findByCpf(cpf);
+
+        if (alunoExistente.isPresent()) {
+            Aluno aluno = alunoExistente.get();
+            aluno.setNome(novoAluno.getNome());
+            aluno.setLogin(novoAluno.getLogin());
+            aluno.setEnderecoEletronico(novoAluno.getEnderecoEletronico());
+            alunoRepository.save(aluno);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean excluirAluno(String cpf) {
+        Optional<Aluno> aluno = alunoRepository.findByCpf(cpf);
+
+        if (aluno.isPresent()) {
+            alunoRepository.delete(aluno.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

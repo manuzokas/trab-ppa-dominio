@@ -7,7 +7,7 @@ public class Aluno {
     private Integer id;
     private LocalDateTime dataHoraCriacao;
     private LocalDateTime dataHoraAlteracao;
-    private boolean desativado; // false
+    private boolean desativado;
 
     // --
     private String nome;

@@ -72,16 +72,27 @@ public class TurmaService {
     }
 
     public void matriculaAluno(NovaMatricula novaMatricula) {
-
+        
         if (!alunoRepository.cpfExists(novaMatricula.getCpfAluno())) {
-            logger.error("Aluno não existe: " + novaMatricula.getCpfAluno());
+            logger.error("Tentativa de matrícula falhou - Aluno não existe: CPF " + novaMatricula.getCpfAluno());
             throw new IllegalStateException("Aluno não existe: " + novaMatricula.getCpfAluno());
         }
 
         Optional<Turma> turmaOptional = turmaRepository.findById(novaMatricula.getTurmaId());
         if (!turmaOptional.isPresent()) {
-            logger.error("Turma não existe: " + novaMatricula.getTurmaId());
+            logger.error("Tentativa de matrícula falhou - Turma não existe: ID " + novaMatricula.getTurmaId());
             throw new IllegalStateException("Turma não existe: " + novaMatricula.getTurmaId());
+        }
+
+        Turma turma = turmaOptional.get();
+
+        logger.info("Verificando disponibilidade de vagas na turma ID: " + turma.getId()
+                + " (Vagas Ocupadas: " + turma.getVagasOcupadas() + "/" + turma.getVagas() + ")");
+
+        if (turma.getVagasOcupadas() >= turma.getVagas()) {
+            logger.error("Tentativa de matrícula falhou - Não há vagas disponíveis na turma ID: "
+                    + novaMatricula.getTurmaId());
+            throw new IllegalStateException("Não há vagas disponíveis na turma: " + novaMatricula.getTurmaId());
         }
 
         Optional<Aluno> alunoOptional = alunoService.buscarAlunoPorCpf(novaMatricula.getCpfAluno());
@@ -89,19 +100,22 @@ public class TurmaService {
                 () -> new IllegalStateException("Aluno não encontrado com CPF: " + novaMatricula.getCpfAluno()));
 
         Matricula novaMatricula2 = new Matricula();
-
         novaMatricula2.setAluno(alunoMatricula);
-        novaMatricula2.setTurma(turmaOptional.get());
+        novaMatricula2.setTurma(turma);
         novaMatricula2.setDataMatricula(LocalDateTime.now());
 
-        logger.info("Criando matrícula: " + novaMatricula2);
-
-        if (novaMatricula2.getId() == null) {
-            logger.debug("ID da nova matrícula é nulo, um ID será atribuído.");
-        }
+        logger.info("Criando matrícula para aluno CPF " + novaMatricula.getCpfAluno()
+                + " na turma ID: " + novaMatricula.getTurmaId());
 
         matriculaRepository.save(novaMatricula2);
-        logger.info("Matrícula salva com sucesso: " + novaMatricula2);
+
+        turma.setVagasOcupadas(turma.getVagasOcupadas() + 1);
+        turmaRepository.save(turma);
+
+        logger.info("Matrícula salva com sucesso para aluno CPF " + novaMatricula.getCpfAluno()
+                + " na turma ID: " + novaMatricula.getTurmaId());
+        logger.info("Número de vagas ocupadas atualizado para: " + turma.getVagasOcupadas()
+                + "/" + turma.getVagas());
     }
 
     public Turma buscarTurma(int id) {
